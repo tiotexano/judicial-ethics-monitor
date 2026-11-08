@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Texas Judicial Ethics Monitor</title>
+<style>
+body { font-family: system-ui, -apple-system, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; color: #222; }
+h1 { border-bottom: 2px solid #333; padding-bottom: 0.5rem; }
+.item { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin: 1rem 0; background: #fafafa; }
+.item h2 { margin-top: 0; font-size: 1.2rem; }
+.meta { color: #555; font-size: 0.9rem; margin-bottom: 0.5rem; }
+.area { display: inline-block; background: #e0e0e0; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+img.thumb { max-width: 200px; float: right; margin-left: 1rem; border-radius: 4px; }
+.updated { color: #666; font-style: italic; }
+</style>
+</head>
+<body>
+<h1>Texas Judicial Ethics / Misconduct Monitor</h1>
+<p class="updated">Last updated: <span id="updated"></span></p>
+<p>Living public log of articles, official reports, sanctions, investigations, and public records involving the Texas judicial system. Priority areas: Guadalupe, Comal, Hays, Bexar, Travis/Austin, Collin, Tarrant, Dallas Counties, and statewide (SCJC, Texas Supreme Court).</p>
+<div id="items"></div>
+<script>
+fetch('entries.json')
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('updated').textContent = data.updated;
+    const container = document.getElementById('items');
+    data.items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'item';
+      let html = '';
+      if (item.image) html += `<img class="thumb" src="${item.image}" alt="">`;
+      html += `<h2><a href="${item.url}" target="_blank">${item.title}</a></h2>`;
+      html += `<div class="meta">${item.date} · ${item.source} · <span class="area">${item.area}</span></div>`;
+      html += `<p>${item.summary}</p>`;
+      html += `<p><small>Source quality: ${item.quality}</small></p>`;
+      div.innerHTML = html;
+      container.appendChild(div);
+    });
+  })
+  .catch(e => document.getElementById('items').innerHTML = '<p>Error loading entries.</p>');
+</script>
+</body>
+</html>
